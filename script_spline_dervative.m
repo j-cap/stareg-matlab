@@ -87,7 +87,7 @@ y = 40*sin(x)*2 + x.^3 + randn(size(x))*5 ;
 y = y / 10;
 scatter(x,y)
 %% Bspline basis and smoothness matrices for FD and analytic derivative
-[X, k] = bspline_basis(x, 25, 2);
+[X, k] = bspline_basis(x, 25, 2, "e");
 S_fd = smoothness_matrix(25, 2, 0);
 S_ana = smoothness_matrix(25, 2, k);
 %% GCV for both types
@@ -106,32 +106,6 @@ disp(["Optimal Lambda Analytic= ", best_lam_ana]);
 %%
 disp(["MSE FD Smoothing = ", mse(y, X_gcv * b_gcv)]);
 disp(["MSE Analytic Smoothing = ", mse(y, X_gcv_ana * b_gcv_ana)]);
-
-
-%% Equivalence of K matrix in Fahrmeir and integral formula for second derivaive
-
-x = linspace(0,1,100)';
-y = sin(x);
-
-nsplines = 10;
-lorder = 3;
-[B, k] = bspline_basis(x, nsplines, lorder, "e");
-
-h = k(2)-k(1);
-k_ = [k, k(end)+h:h:k(end)+3*h];
-K = zeros(nsplines, nsplines);
-for r=l+1+2:numel(k)+2
-    for j=l+1+2:numel(k)+2
-        K(r-l,j-l) = bspline(x, k_, r, l-2)' * bspline(x, k_, j, l-2);
-    end
-end
-
-
-
-
-
-
-
 
 
 

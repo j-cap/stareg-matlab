@@ -1,44 +1,41 @@
-function v = check_constraint(coef, constraint, y, X)
-%% Check whether the coefficients in coef hold the constraint
-%
-% o) Currently only for 1D!
+function v = check_constraint(coef, constraint, B, y)
+%% 
+% Check whether the coefficients in coef hold the constraint
 %
 % Parameters:
 % -----------
 % coef  : array     - Array of coefficients.
 % constraint : str  - Constraint type.
+% B  : matrix       - B-spline basis matrix.
 % y  : array        - Output data.
-% X  : matrix       - B-spline basis.
 %
 % Returns:
 % --------
 % v  : array      - Diagonal elements of the weighting matrix V.
-%
-%%
-    if isrow(coef), coef = coef'; end
 
-    threshold = 1e-8;
+arguments
+   coef (:,1) double
+   constraint (1,1) string = "inc"
+   B (:,:) double = 0
+   y (:,1) double = 0
+end
+
+    threshold = 0;
     if constraint == "inc"
-        disp("Check Increasing Constraint");
         v = diff(coef) < threshold;
     elseif constraint == "dec"
-        disp("Check Decreasing Constraint");
         v = diff(coef) > -threshold;
     elseif constraint == "conv"
-        disp("Check Convexe Constraint");
         v = diff(coef, 2) < threshold;
     elseif constraint == "conc"
-        disp("Check Concave Constraint");
         v = diff(coef, 2) > -threshold;
     elseif constraint == "peak"
-        disp("Check Peak Constraint");
         [peak, peakidx] = max(y);
-        [peaksplinevalue, peaksplineidx] = max(X(peakidx, :));
+        [peaksplinevalue, peaksplineidx] = max(B(peakidx, :));
         v = [diff(coef(1:peaksplineidx)) < threshold; 0; diff(coef(peaksplineidx+1:end)) > threshold];
     elseif constraint == "valley"
-        disp("Check Valley Constraint");
         [valley, valleyidx] = max(-y);
-        [valleysplinevalue, valleysplineidx] = max(X(valleyidx, :));
+        [valleysplinevalue, valleysplineidx] = max(B(valleyidx, :));
         v = [diff(coef(1:valleysplineidx)) > threshold; 0; diff(coef(valleysplineidx+1:end)) < threshold];
     elseif constraint == "none"
         v = zeros(size(coef));

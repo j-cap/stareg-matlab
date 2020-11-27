@@ -1,28 +1,5 @@
-%%
-
-for i=4:17
-    plot(xdata, bspline(xdata, knots3, i, l-1), 'DisplayName', ['Spline-', num2str(i-3)])
-    hold on;
-    legend()
-end
-
-%%
-
-mean = 75;
-sd = 5;
-skew = .3;
-kurt = 2.7;
-col = 1
-trial = 1;
-rating = [];
-while length(rating)<100
-r = pearsrnd(mean,sd,skew,kurt,trial,col);
-if r > 0 & r < 100
-rating = [rating ; r];
-end
-end
-hist(rating)
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Generate data for the Bias-Variance Plot
 x = linspace(0.1,2,250)';
 y_bias = 5 ./ (2*x) + 2;
@@ -37,7 +14,8 @@ plot(x, y_var);
 plot(x, y_bias + y_var)
 legend('bias', 'variance', 'both');
 xline(x(o_idx));
-%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Generate data for the spline-types plot
 x = linspace(0,1,1000)';
 
@@ -45,15 +23,15 @@ knots_e = 0:0.1:1;
 knots_q = [0, 0.1, 0.2, 0.38, 0.46, 0.52, 0.56, 0.83, 0.88, 0.9, 1];
 knots = knots_e';
 kidx = 1;
-B0 = bspline(x, knots, kidx, 0);
-B1 = bspline(x, knots, kidx+1, 1);
-B2 = bspline(x, knots, kidx+2, 2);
-B3 = bspline(x, knots, kidx+3, 3);
+B0 = Bspline.basisfunction(x, knots, kidx, 0);
+B1 = Bspline.basisfunction(x, knots, kidx+1, 1);
+B2 = Bspline.basisfunction(x, knots, kidx+2, 2);
+B3 = Bspline.basisfunction(x, knots, kidx+3, 3);
 
 %%
-k_save = [knots; zeros(numel(B0)-length(knots), 1)];
-T = table(x, B0, B1, B2, B3, k_save, 'VariableNames', {'x', 'B0', 'B1', 'B2', 'B3', 'knots'});
-writetable(T, "spline-types-quantile.txt", 'Delimiter', ' ');
+%k_save = [knots; zeros(numel(B0)-length(knots), 1)];
+%T = table(x, B0, B1, B2, B3, k_save, 'VariableNames', {'x', 'B0', 'B1', 'B2', 'B3', 'knots'});
+%writetable(T, "spline-types-quantile.txt", 'Delimiter', ' ');
 %%
 figure();
 plot(x, B0); hold on;
@@ -65,15 +43,16 @@ scatter(knots, zeros(size(knots)));
 for k=1:numel(knots)
     xline(knots(k));
 end
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Generate data for B-spline basis plots
 ndata = 1000;
 xe = linspace(0., 1, ndata)';
 xq = exp(3*xe);
 xq = sort((xq - min(xq)) / (max(xq) - min(xq)));
 
-[Be, ke] = bspline_basis(xe, 8, 3, "e");
-[Bq, kq] = bspline_basis(xq, 8, 3, "q");
+[Be, ke] = Bspline.basismatrix(xe, 8, 3, "e");
+[Bq, kq] = Bspline.basismatrix(xq, 8, 3, "q");
 %%
 k_save_e = [ke'; zeros(ndata-length(ke), 1)];
 k_save_q = [kq'; zeros(ndata-length(kq), 1)];
@@ -83,11 +62,37 @@ k_save_q = [kq'; zeros(ndata-length(kq), 1)];
 
 %%
 figure();
-plot(xq, Bq); hold on;
+plot(xe, Be); hold on;
 scatter(kq, zeros(size(kq)), 'o');
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Univariate test function
+rng(3);
+%x = linspace(0,1,200)';
+x = rand(200,1);
+f =@(x) sin(2.8*pi*x) + 6*x + 3;
+ytrue = f(x);
+y = ytrue + randn(size(x))*0.1;
+
+[xtrain, ytrain, xtest, ytest] = Utils.train_test_split(x, y, 0.25);
+
+[c,B] = Bspline.fit(xtrain,ytrain,15,3,"e");
+
+figure();
+scatter(xtrain,ytrain); hold on;
+scatter(xtest, ytest);
+scatter(x, ytrue);
+legend('Train Data', 'Test Data', 'True Data','Bspline');
+%%
+dlmwrite("f1_train_set.txt", full([xtrain, ytrain]), 'delimiter', ' ');
+dlmwrite("f1_test_set.txt", full([xtest, ytest]), 'delimiter', ' ');
+dlmwrite("f1_true.txt", full([x, ytrue]), 'delimiter', ' ');
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% test the derivatives
 x = [linspace(0,3,20), linspace(3.001, 6, 80)];
 x = linspace(0,6,1000);
