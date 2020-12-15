@@ -1,6 +1,5 @@
 function [dSpline, dX] = bspline_1st_derivative(x, knots, coef, l)
 %% Calculate the first derivative according to Fahrmeir, Regression p. 430
-%       !!! for equidistant grids !!!
 %
 % Parameters:
 % ----------
@@ -17,9 +16,10 @@ function [dSpline, dX] = bspline_1st_derivative(x, knots, coef, l)
  
     dX = zeros(length(x), length(coef)-1);
     h = zeros(length(coef)-1,1);
-    for i=l+1:length(knots)-2
-        dX(:,i-l) = bspline(x, knots, i, l-1);
-        h(i-l) = knots(i) - knots(i-l); 
+    %for i=l+1:length(knots)-2
+    for i=2:length(coef)
+        dX(:,i-1) = Bspline.basisfunction(x, knots, l+i-1, l-1);
+        h(i-1) = knots(l+i) - knots(i); 
     end
     dcoef = diff(coef) ./ h;
     dSpline = l * (dX * dcoef);
