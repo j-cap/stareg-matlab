@@ -21,14 +21,28 @@ function [coef, B, knots] = fit_Pspline(X,y, lam, nr_splines, ll, knot_type)
 % B : matrix     - B-spline basis matrix.
 % knots : array  - Knot sequence.
 arguments
-   X (:,1) double
+   X (:,:) double
    y (:,1) double
-   lam (1,1) double = 1
-   nr_splines (1,1) double = 10
-   ll (1,1) double = 3
-   knot_type (1,1) string = "e"
+   lam (:,1) double = 1;
+   nr_splines (:,1) double = 10;
+   ll (:,1) double = 3;
+   knot_type (:,1) string = "e";
 end
-    [B, knots] = Bspline.basismatrix(X, nr_splines, ll, knot_type);
-    D = Utils.mapping_matrix("smooth", nr_splines);
-    coef = ((B'*B) + lam * (D'*D)) \ (B' * y);
+
+    [~,c] = size(X);
+    if c == 1
+        [B, knots] = Bspline.basismatrix(X, nr_splines, ll, knot_type);
+        D = Utils.mapping_matrix("smooth", nr_splines);
+        coef = ((B'*B) + lam * (D'*D)) \ (B' * y);
+    elseif c == 2
+        [B, knots1, knots2] = Bspline.tensorproduct_basismatrix(X, nr_splines, ll, knot_type);
+        knots = {knots1, knots2};
+        D1 = Utils.mapping_matrix_tp("smooth", nr_splines, 1);
+        D2 = Utils.mapping_matrix_tp("smooth", nr_splines, 2);
+        coef = ((B'*B) + lam * (D1'*D1) + lam * (D2'*D2)) \ (B' * y);
+    else
+        disp("Maximal dimension  == 2!");
+        return
+    end
+    
 end

@@ -1,10 +1,11 @@
 function D = mapping_matrix(constraint, nr_splines)
-%% Create the mapping matrix for the given constraint.
+%% Create the mapping matrix for the the constraint P-spline as in Fahrmeir
+% Regression, p. 436f, for the given constraint
 %
 % Parameters:
 % -----------
 % constraint : str    - Constraint type.
-% nsplines   : int    - Number of splines.
+% nsplines   : int    - Number of used B-spline basis functions.
 %
 % Returns:
 % --------
@@ -16,21 +17,22 @@ arguments
     nr_splines (1,1) double = 10;
 end
 
-e = ones(nr_splines, 1);
-if constraint == "inc" | constraint == "dec" | constraint == "peak" | constraint == "valley"
-    diagonals = [-e, e];
-    degree = 1;
-elseif constraint == "conv" | constraint == "conc" | constraint == "smooth"
-    diagonals = [e, -2*e, e];
-    degree = 2;
-elseif constraint == "none"
-    diagonals = zeros(nr_splines, 1);
-    degree = 0;
-else
-    disp("Constraint of type -"+constraint+"- not implemented");
-    return
-end
+    if ismember(constraint, ["inc", "dec", "peak", "valley"])
+        order = 1;
+    else
+        order = 2;
+    end
+    
+    if order == 1
+        d = [-1*ones(nr_splines,1), ones(nr_splines,1)];
+        D = spdiags(d, 0:order, nr_splines-order, nr_splines);
+    elseif order == 2
+        d = [ones(nr_splines, 1), -2*ones(nr_splines, 1), ones(nr_splines,1)];
+        D = spdiags(d, 0:order, nr_splines-order, nr_splines);
+    end
 
-D = spdiags(diagonals, 0:degree, nr_splines-degree, nr_splines);
+    if constraint == "none"
+        D = zeros(nr_splines, nr_splines);
+    end
 
 end

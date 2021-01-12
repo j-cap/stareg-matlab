@@ -14,6 +14,7 @@ function b = basisfunction(X, knots, j, ll)
 % Returns:
 % --------
 % b : array    - B-spline evaluated at x.
+
 arguments
     X (:,1) double 
     knots (:,1) double

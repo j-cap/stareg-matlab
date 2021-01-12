@@ -18,12 +18,12 @@ function [B, knots] = basismatrix(X, nr_splines, ll, knot_type)
 %
 % Returns:
 % --------
-% B  :  matrix   - B-spline basis of dim (length(X) times nsplines).
+% B  :  matrix   - B-spline basis of dim (length(X) times nr_splines).
 % knots : array  - Knot sequence.
 
 arguments
    X (:,1) double
-   nr_splines (1,1) double
+   nr_splines (1,1) double = 10
    ll (1,1) double = 3
    knot_type (1,1) string = "e"
 end
@@ -43,7 +43,9 @@ end
     end
     
     dknots = mean(diff(knots));
-    knots = [linspace(xmin-ll*dknots, xmin-dknots, ll), knots, linspace(xmax+dknots, xmax+ll*dknots, ll)];
+    knots_left = linspace(xmin-ll*dknots, xmin-dknots, ll);
+    knots_right = linspace(xmax+dknots, xmax+ll*dknots, ll);
+    knots = [knots_left, knots, knots_right]; 
 
     for i=ll+1:length(knots)-1
         B(:,i-ll) = Bspline.basisfunction(X, knots, i, ll);

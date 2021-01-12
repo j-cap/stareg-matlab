@@ -1,4 +1,4 @@
-function [coef, B, knots] = fit(X, y, nr_splines, ll, knot_type)
+function [coef_, B, knots] = fit(X, y, nr_splines, ll, knot_type)
 %%
 % Calculate the least squares coefficients for the B-spline fit.
 %
@@ -23,13 +23,25 @@ function [coef, B, knots] = fit(X, y, nr_splines, ll, knot_type)
 arguments
    X (:,:) double
    y (:,1) double
-   nr_splines (1,1) double = 10
-   ll (1,1) double = 3
-   knot_type (1,1) string = "e"
+   nr_splines (:,:) double = 10;
+   ll (:,:) double = 3;
+   knot_type (:,:) string = "e";
 end
-
-    [B, knots] = Bspline.basismatrix(X, nr_splines, ll, knot_type);
-    coef = B \ y;
+    
+    [~, cols] = size(X);
+    if cols == 1
+        [B, knots] = Bspline.basismatrix(X, nr_splines, ll, knot_type);
+    elseif cols == 2
+        [B, knots1, knots2] = Bspline.tensorproduct_basismatrix(X, nr_splines, ll, knot_type);
+        if length(knots1) ~= length(knots2)
+            disp("Different knot lengths may lead to error here!");
+        end
+        knots = [knots1; knots2]';
+    else
+        disp('Maximal dimension == 2!');
+        return;
+    end
+    coef_ = B \ y;
 
 end
 

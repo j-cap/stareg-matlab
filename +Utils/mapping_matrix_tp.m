@@ -1,44 +1,50 @@
-function [Id2D1, D2Id1] = mapping_matrix_tp(constraint, nr_splines)
-%% Create the mapping matrix for the given constraint.
+function Dc = mapping_matrix_tp(constraint, nr_splines, dim)
+%% Create the mapping matrix for the constraint tensorproduct P-splines as 
+% in Fahrmeir, Regression, p.508 (8.27) for the constraint.
 %
 % Parameters:
 % -----------
 % constraint : str    - Constraint type.
 % nsplines   : array  - Number of splines for both dimensions.
-%
+% dim : int           - indicator for the dimension of the constraint, 
+%                       1 for dimension 1, 2 for dimension 2, e.g. 
+%                       (10, "inc", 1) == 10 basis functions with
+%                       increasing constraint in dimension 1 for the
+%                       two-dimesional data X = [x_1, x_2].
 % Returns:
 % --------
-% Id2D1 : matrix       - Mapping matrix for dimension 1.
-% D2Id1 : matrix       - Mapping matrix for dimension 2.
+% Dc : matrix       - Mapping matrix for the constraint and dimension.
 %%
 arguments
     constraint (1,1) string
-    nr_splines (1,2) double = [10,10]
+    nr_splines (1,2) double = [10,10];
+    dim (1,1) double = 1;
 end
+    if ismember(constraint, ["inc", "dec", "peak", "valley"])
+        order = 1;
+    else
+        order = 2;
+    end
 
-e1 = ones(nr_splines(1), 1);
-e2 = ones(nr_splines(2), 1);
-if constraint == "inc" | constraint == "dec" | constraint == "peak" | constraint == "valley"
-    d1 = [-e1, e1];
-    d2 = [-e2, e2];
-    degree = 1;
-elseif constraint == "conv" | constraint == "conc" | constraint == "smooth"
-    d1 = [e1, -2*e1, e1];
-    d2 = [e2, -2*e2, e2];
-    degree = 2;
-elseif constraint == "none"
-    d1 = zeros(nr_splines(1), 1);
-    d2 = zeros(nr_splines(2), 1);
-    degree = 0;
-else
-    disp("Constraint of type -"+constraint+"- not implemented");
-    return
-end
 
-D1 = spdiags(d1, 0:degree, nr_splines(1)-degree, nr_splines(1));
-D2 = spdiags(d2, 0:degree, nr_splines(2)-degree, nr_splines(2));
+    if order == 1
+        d = [-1*ones(nr_splines(dim),1), ones(nr_splines(dim),1)];
+        D = spdiags(d, 0:order, nr_splines(dim)-order, nr_splines(dim));
+    elseif order == 2
+        d = [ones(nr_splines(dim), 1), -2*ones(nr_splines(dim), 1), ones(nr_splines(dim),1)];
+        D = spdiags(d, 0:order, nr_splines(dim)-order, nr_splines(dim));
+    else
+        return
+    end
 
-Id2D1 = kron(eye(nr_splines(2)), D1);
-D2Id1 = kron(D2, eye(nr_splines(1)));
-
+    if constraint == "none"
+        D = zeros(prod(nr_splines), prod(nr_splines));
+    end
+    
+    if dim == 1
+        Dc = kron(eye(nr_splines(dim+1)), D);
+    else
+        Dc = kron(D, eye(nr_splines(dim-1)));
+    end
+    
 end
