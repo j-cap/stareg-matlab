@@ -31,38 +31,32 @@ legend('Data','LS','PLS', 'PLS_func');
 [beta_PLS_GCV, X, best_lam] = GCV_PLS(data, z, [12, 20], 100, 0, 0);
 
 %% STRUCTURED ADDITIVE REGRESSION
-n_data = 1000;
+n_data = 250;
 X = linspace(0,1,150)';
 XX = [rand(n_data,1), rand(n_data,1)];
 % XX = [linspace(0,1,n_data)+5; linspace(0,1,n_data)]';
 ytrue = 4*X.^2 + sin(X.*6);
 y = ytrue + randn(size(X))*0.1;
-yy_true = 0.5*XX(:,1).^2 - 2*cos(XX(:,2)*6) + XX(:,1).*XX(:,2); 
+yy_true = 0.5*XX(:,1).^2 - 2*cos(XX(:,2)*6); 
 yy = yy_true + randn(size(XX(:,1)))*0.4;
 %% 1D
 figure();
 plot(X, ytrue, "DisplayName", "True Function"); hold on;
 scatter(X, y, "DisplayName", "Data");
-scatter(X, BB*cc, "DisplayName", "Fit");
 legend; grid;
 %% 2D
 figure()
 scatter3(XX(:,1), XX(:,2), yy, 'DisplayName','Data'); hold on;
 scatter3(XX(:,1), XX(:,2), yy_true, 'DisplayName','True Function'); hold on;
-scatter3(XX(:,1), XX(:,2), BB*cc, 'DisplayName', 'Fit');
-legend()
+
 %% create the cell array description of the model
-d = {["s(1)", "inc", 80, 6000, "e"];
-     ["s(2)", "peak", 80, 6000, "e"];
-     ["t(1,2)", "inc,none", "12,8", "6000,6000", "e,e"]};
+d = {["s(1)", "inc", 80, 6000, "e"]}; 
+     %    ["t(1,2)", "inc,none", "12,8", "6000,6000", "e,e"]};
 %%      
-[cc, BB] = Stareg.fit(d, XX, yy);
-%% 1D
-figure();
-plot(X, ytrue, "DisplayName", "True Function"); hold on;
-scatter(X, y, "DisplayName", "Data");
-scatter(X, BB*cc, "DisplayName", "Fit");
-legend; grid;
+m = Stareg.create_model_from_description(d, X, y);
+[B, S, K, W] = Stareg.create_model_matrices(m);
+%%
+[cc, BB] = Stareg.fit(d, X, y);
 %%
 
 [w, wc] = Utils.check_constraint_full(coef_pls, m, B, yy);

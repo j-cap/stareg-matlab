@@ -22,10 +22,10 @@ function [B, knots] = basismatrix(X, nr_splines, ll, knot_type)
 % knots : array  - Knot sequence.
 
 arguments
-   X (:,1) double
-   nr_splines (1,1) double = 10
-   ll (1,1) double = 3
-   knot_type (1,1) string = "e"
+   X (:,1) double;
+   nr_splines (1,1) double = 10;
+   ll (1,1) double = 3;
+   knot_type (1,1) string = "e";
 end
     
     B = zeros(length(X), nr_splines);

@@ -26,7 +26,6 @@ end
         order = 2;
     end
 
-
     if order == 1
         d = [-1*ones(nr_splines(dim),1), ones(nr_splines(dim),1)];
         D = spdiags(d, 0:order, nr_splines(dim)-order, nr_splines(dim));
@@ -36,15 +35,15 @@ end
     else
         return
     end
-
-    if constraint == "none"
-        D = zeros(prod(nr_splines), prod(nr_splines));
-    end
     
     if dim == 1
         Dc = kron(eye(nr_splines(dim+1)), D);
     else
         Dc = kron(D, eye(nr_splines(dim-1)));
+    end
+
+    if constraint == "none"
+        Dc = zeros(prod(nr_splines));
     end
     
 end

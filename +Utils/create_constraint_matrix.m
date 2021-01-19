@@ -1,0 +1,35 @@
+function [constr_matrix] = create_constraint_matrix(model, w)
+%%
+% Creates the constraint matrix using the new weights in w
+%
+% Parameters:
+% -----------
+% model : struct with fields
+% w : struct with fields
+% 
+% Returns:
+% --------
+% K : matrix
+
+arguments
+    model (1,1) struct;
+    w (1,1) struct;
+end
+    fn = fieldnames(model);
+    constr_matrix = [];
+    for i=1:numel(fn)
+        if model.(fn{i}).type.startsWith("s") % create smoothness matrix and constraint matrix for B-splines
+            constr_matrix = blkdiag(constr_matrix, model.(fn{i}).lam_c * model.(fn{i}).Dc' * diag(w.(fn{i}).v) * model.(fn{i}).Dc);
+
+        elseif model.(fn{i}).type.startsWith("t") % create smoothness matrix and constraint matrix for tensor-product B-splines
+
+            Dc1 = model.(fn{i}).lam_c(1) * (model.(fn{i}).Dc.Dc1' * diag(w.(fn{i}).v1) * model.(fn{i}).Dc.Dc1);
+            Dc2 = model.(fn{i}).lam_c(2) * (model.(fn{i}).Dc.Dc2' * diag(w.(fn{i}).v2) * model.(fn{i}).Dc.Dc2);
+            Dc = Dc1 + Dc2;
+            constr_matrix = blkdiag(constr_matrix, Dc);
+                        
+        end
+    end
+
+end
+
