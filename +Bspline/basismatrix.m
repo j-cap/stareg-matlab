@@ -1,10 +1,10 @@
-function [B, knots] = basismatrix(X, nr_splines, ll, knot_type)
+function [B, knots] = basismatrix(X, nr_splines, order, knot_type)
 %% 
 % Generate the B-spline basis matrix for nr_splines given the data X. 
 % 
 % Note: (nr_splines + order + 1) knots are needed for a B-spline basis of 
-%       order l with nr_splines, 
-%       e.g. for l=3, nr_splines=10 -> length(knots) == 14.    
+%       'order' with nr_splines, 
+%       e.g. for order=3, nr_splines=10 -> length(knots) == 14.    
 %
 % Parameters:
 % ----------
@@ -12,19 +12,19 @@ function [B, knots] = basismatrix(X, nr_splines, ll, knot_type)
 %                     B-spline basis matrix for.
 % nr_splines : int -  Number of parameters (== number of B-spline basis 
 %                     functions).
-% ll : int         -  Specifies the order of the B-spline basis functions.
+% order : int      -  Specifies the order of the B-spline basis functions.
 % knot_type : str  -  Decide between equidistant "e" and quantile based "q"
 %                     knot placement.
 %
 % Returns:
 % --------
-% B  :  matrix   - B-spline basis of dim (length(X) times nr_splines).
-% knots : array  - Knot sequence.
+% B  :  matrix    - B-spline basis of dim (length(X) times nr_splines).
+% knots : struct  - Knot sequence.
 
 arguments
    X (:,1) double;
    nr_splines (1,1) double = 10;
-   ll (1,1) double = 3;
+   order (1,1) double = 3;
    knot_type (1,1) string = "e";
 end
     
@@ -32,9 +32,9 @@ end
     xmin = min(X); xmax =  max(X);
 
     if knot_type == "e"
-        knots = linspace(xmin, xmax, nr_splines-ll+1);
+        knots = linspace(xmin, xmax, nr_splines-order+1);
     elseif knot_type == "q"
-        p = linspace(0, 1, nr_splines-ll+1);
+        p = linspace(0, 1, nr_splines-order+1);
         xs = sort(X); % Ordered elements
         i = (length(xs)-1)*p(:)+1; % Indexes
         knots = xs(floor(i))';
@@ -43,12 +43,13 @@ end
     end
     
     dknots = mean(diff(knots));
-    knots_left = linspace(xmin-ll*dknots, xmin-dknots, ll);
-    knots_right = linspace(xmax+dknots, xmax+ll*dknots, ll);
+    knots_left = linspace(xmin-order*dknots, xmin-dknots, order);
+    knots_right = linspace(xmax+dknots, xmax+order*dknots, order);
     knots = [knots_left, knots, knots_right]; 
 
-    for i=ll+1:length(knots)-1
-        B(:,i-ll) = Bspline.basisfunction(X, knots, i, ll);
+    for i=order+1:length(knots)-1
+        B(:,i-order) = Bspline.basisfunction(X, knots, i, order);
     end
     B = sparse(B);
+    knots = struct("k1", knots);
 end

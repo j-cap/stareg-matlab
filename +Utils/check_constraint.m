@@ -21,7 +21,7 @@ arguments
    B (:,:) double = 0
 end
 
-    threshold = 1e-4;
+    threshold = 1e-6;
     if ~ismember(constraint, ["inc", "dec", "peak","valley","conc","conv","none"])
         disp("Constraint of type -"+constraint+"- not implemented");
         return

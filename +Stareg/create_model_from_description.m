@@ -16,7 +16,7 @@ function [model] = create_model_from_description(description,X, y)
 %    
 % Returns:
 % --------
-% d : dict      - Returns a dictionary with the following key-value pairs:
+% model : dict      - Returns a dictionary with the following key-value pairs:
 %                        basis=B, 
 %                        smoothness=S, 
 %                        constraint=K, 

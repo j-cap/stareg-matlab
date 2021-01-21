@@ -22,28 +22,23 @@ arguments
 end
     if ismember(constraint, ["inc", "dec", "peak", "valley"])
         order = 1;
-    else
-        order = 2;
-    end
-
-    if order == 1
         d = [-1*ones(nr_splines(dim),1), ones(nr_splines(dim),1)];
         D = spdiags(d, 0:order, nr_splines(dim)-order, nr_splines(dim));
-    elseif order == 2
+    elseif ismember(constraint, ["conc", "conv", "smooth"])
+        order = 2;
         d = [ones(nr_splines(dim), 1), -2*ones(nr_splines(dim), 1), ones(nr_splines(dim),1)];
         D = spdiags(d, 0:order, nr_splines(dim)-order, nr_splines(dim));
-    else
+    elseif constraint == "none"
+        Dc = zeros(prod(nr_splines));
         return
     end
     
     if dim == 1
         Dc = kron(eye(nr_splines(dim+1)), D);
-    else
+    elseif dim == 2
         Dc = kron(D, eye(nr_splines(dim-1)));
     end
 
-    if constraint == "none"
-        Dc = zeros(prod(nr_splines));
-    end
+
     
 end

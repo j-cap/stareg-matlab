@@ -1,10 +1,10 @@
-function [best_lam] = calc_GCV_2d(X, y, nlam, plot_, nr_splines, ll, knot_type)
+function [best_lam] = calc_GCV_2d(X, y, nlam, plot_, nr_splines, order, knot_type)
 %% 
 % Calculate the generalized cross validation for the given data (x,y) 
 % according to Fahrmeir, Regression p. 480.
 %
 % Note: The function works for B-splines and tensor-product B-splines. When
-% using tensor-product B-splines, the arguments nr_splines, ll and
+% using tensor-product B-splines, the arguments nr_splines, order and
 % knot_type need be to of size (1x2). 
 %
 % Parameters:
@@ -15,7 +15,7 @@ function [best_lam] = calc_GCV_2d(X, y, nlam, plot_, nr_splines, ll, knot_type)
 %                       coefficients for.
 % nr_splines : double - Number of parameters (== number of B-spline basis 
 %                       functions).
-% ll : int            - Specifies the order of the B-spline basis functions.
+% order : int         - Specifies the order of the B-spline basis functions.
 % knot_type : str     - Decide between equidistant "e" and quantile based 
 %                       "q" knot placement.
 % nlam : double       - Specifies the number of lambdas to try for the GCV.
@@ -31,27 +31,28 @@ arguments
    nlam (1,1) double = 100
    plot_ (1,1) double = 0
    nr_splines (1,2) double = 10
-   ll (1,2) double = [3,3];
+   order (1,2) double = [3,3];
    knot_type (1,2) string = ["e", "e"];
 end
 
     lams = logspace(-8,8,nlam);
     gcvs = zeros(size(lams));
     
-    [B, knots1, knots2] = Bspline.tensorproduct_basismatrix(X, nr_splines, ll, knot_type);
+    [basismatrix, knots] = Bspline.tensorproduct_basismatrix(X, nr_splines, order, knot_type);
     D1 = Utils.mapping_matrix_tp("smooth", nr_splines, 1);
     D2 = Utils.mapping_matrix_tp("smooth", nr_splines, 2);
     
-    BtB = B'*B;
+    BtB = basismatrix'*basismatrix;
+    Bty = basismatrix'*y;
     D1tD1 = D1'*D1;
     D2tD2 = D2'*D2;
     
     for i=1:length(lams)
         msg = ['try: lam=', num2str(lams(i))];
         disp(msg);
-        coef_pls = (BtB + lams(i) * D1tD1 + lams(i) * D2tD2) \ (B' * y);
-        traceH = trace(BtB * inv(BtB + lams(i) * D1tD1 + lams(i) * D2tD2));
-        ypred = B * coef_pls;
+        coef_pls = (BtB + lams(i) * D1tD1 + lams(i) * D2tD2) \ Bty;
+        traceH = trace((BtB + lams(i) * D1tD1 + lams(i) * D2tD2) \ BtB);
+        ypred = basismatrix * coef_pls;
         gcvs(i) = sum(((y - ypred) ./ (1 - traceH/length(y))).^2) / length(y);
     end
     [~, idx] = min(gcvs);

@@ -1,4 +1,4 @@
-function [w, wc] = check_constraint_full(coef, model,basis, y)
+function [w, wc] = check_constraint_full(coef, model, basis, y)
 %%
 % Checks the respective parts of the coef vector against the respective
 % constraint 

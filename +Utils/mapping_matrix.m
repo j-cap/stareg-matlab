@@ -19,20 +19,18 @@ end
 
     if ismember(constraint, ["inc", "dec", "peak", "valley"])
         order = 1;
-    else
-        order = 2;
-    end
-    
-    if order == 1
         d = [-1*ones(nr_splines,1), ones(nr_splines,1)];
         D = spdiags(d, 0:order, nr_splines-order, nr_splines);
-    elseif order == 2
+    elseif ismember(constraint, ["conc", "conv", "smooth"])
+        order = 2;
         d = [ones(nr_splines, 1), -2*ones(nr_splines, 1), ones(nr_splines,1)];
         D = spdiags(d, 0:order, nr_splines-order, nr_splines);
-    end
-
-    if constraint == "none"
+    elseif ismember(constraint, ["none"])
         D = zeros(nr_splines, nr_splines);
+    else
+        D = 0;
+        disp("Constraint not implemented")
+        return
     end
 
 end

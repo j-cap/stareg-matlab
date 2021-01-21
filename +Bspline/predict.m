@@ -1,4 +1,4 @@
-function s = predict(Xpred,knots,coef,ll)
+function s = predict(Xpred,knots,coef,order)
 %%
 % Evaluate the B-spline given the knot sequence in knots with the
 % coefficients in coef for data X.
@@ -6,9 +6,9 @@ function s = predict(Xpred,knots,coef,ll)
 % Parameters:
 % X : array      - Data points of shape (n_samples, :) to evaluate the 
 %                  B-spline on.
-% knots : array  - Knot sequence, length = (length(coef) + ll + 1).
+% knots : array  - Knot sequence, length = (length(coef) + order + 1).
 % coef : array   - B-spline coefficients.
-% ll : double    - Order of the B-spline basis functions.
+% order : double - Order of the B-spline basis functions.
 %
 % Returns
 % -------
@@ -16,29 +16,29 @@ function s = predict(Xpred,knots,coef,ll)
 
 arguments
     Xpred (:,:) double
-    knots (:,:) double
+    knots (:,:) struct
     coef (:,1) double
-    ll (1,:) double = 3;
+    order (1,:) double = 3;
 end
 
     [r,c] = size(Xpred);
     if c == 1
         disp('Prediction for 1-D data');
         B = zeros(r, length(coef));
-        for i=ll+1:length(knots)-1 
-            B(:,i-ll) = Bspline.basisfunction(Xpred, knots, i, ll);
+        for i=order+1:length(knots.k1)-1 
+            B(:,i-order) = Bspline.basisfunction(Xpred, knots.k1, i, order);
         end
     elseif c == 2
         disp('Prediction for 2-D data');
-        B1 = zeros(r, length(knots(:,1))-1-ll(1));
-        B2 = zeros(r, length(knots(:,2))-1-ll(2));
+        B1 = zeros(r, length(knots.k1)-1-order(1));
+        B2 = zeros(r, length(knots.k2)-1-order(2));
         B = zeros(r, length(coef));
         
-        for i=ll(1)+1:length(knots(:,1))-1
-            B1(:,i-ll(1)) = Bspline.basisfunction(Xpred(:,1), knots(:,1), i, ll(1));
+        for i=order(1)+1:length(knots.k1)-1
+            B1(:,i-order(1)) = Bspline.basisfunction(Xpred(:,1), knots.k1, i, order(1));
         end
-        for i=ll(2)+1:length(knots(:,2))-1
-            B2(:,i-ll(2)) = Bspline.basisfunction(Xpred(:,2), knots(:,2), i, ll(2));
+        for i=order(2)+1:length(knots.k2)-1
+            B2(:,i-order(2)) = Bspline.basisfunction(Xpred(:,2), knots.k2, i, order(2));
         end
         for i=1:r
             B(i,:) = kron(B2(i,:), B1(i,:));
