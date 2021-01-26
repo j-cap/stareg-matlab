@@ -16,6 +16,10 @@ d = {["s(1)", "inc", 100, 3000, "e"];
      
 [coef, basis_matrix, model] = Stareg.fit(d, X, y); % fit the model
 ```
+## Code Overview
+
+![](code-overview.PNG)
+
 
 ## Features
 - Structured Additive Regression
