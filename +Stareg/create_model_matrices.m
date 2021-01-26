@@ -1,6 +1,6 @@
 function [basis_matrix, smoothness_matrix, constr_matrix, weight_matrix, coef] = create_model_matrices(model)
 %%
-% create combined basis matrix, smoothness matrix and constraint matrix for the
+% Creates combined basis matrix, smoothness matrix and constraint matrix for the
 % given model, i.e.
 %
 % for the model given by the description 

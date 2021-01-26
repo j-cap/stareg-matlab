@@ -1,5 +1,6 @@
 function D = mapping_matrix(constraint, nr_splines)
-%% Create the mapping matrix for the the constraint P-spline as in Fahrmeir
+%% 
+% Create the mapping matrix for the the constraint P-spline as in Fahrmeir
 % Regression, p. 436f, for the given constraint
 %
 % Parameters:

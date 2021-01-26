@@ -7,6 +7,9 @@ function [best_lam] = calc_GCV_2d(X, y, nlam, plot_, nr_splines, order, knot_typ
 % using tensor-product B-splines, the arguments nr_splines, order and
 % knot_type need be to of size (1x2). 
 %
+% Note: When using tensor-product B-splines, the function tries the same
+% test-lambda for both directions.
+%
 % Parameters:
 % ----------
 % X : array           - Input data of shape (n_samples, 1 or 2) to calculate 

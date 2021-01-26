@@ -1,5 +1,6 @@
 function Dc = mapping_matrix_tp(constraint, nr_splines, dim)
-%% Create the mapping matrix for the constraint tensorproduct P-splines as 
+%%
+% Create the mapping matrix for the constraint tensorproduct P-splines as 
 % in Fahrmeir, Regression, p.508 (8.27) for the constraint.
 %
 % Parameters:

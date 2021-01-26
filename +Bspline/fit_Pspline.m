@@ -1,6 +1,6 @@
 function [coef, B, knots] = fit_Pspline(X,y, lam, nr_splines, order, knot_type)
 %% 
-% Penalized Least Squares for B-Splines 
+% Penalized Least Squares for B-Splines or tensor-product B-splines.
 %
 % Parameters:
 % ----------
