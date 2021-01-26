@@ -3,7 +3,7 @@
 
 ## Usage
 
-'''Matlab
+```Matlab
 
 rng(2); % set random seed
 n_data = 500; 
@@ -15,7 +15,7 @@ d = {["s(1)", "inc", 100, 3000, "e"];
      ["t(1,2)", "none,inc", "12,20", "2000,2000", "e,q"]}; % create model description
      
 [coef, basis_matrix, model] = Stareg.fit(d, X, y); % fit the model
-'''
+```
 
 ## Features
 - Structured Additive Regression
