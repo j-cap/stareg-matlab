@@ -6,8 +6,9 @@ function [model] = create_model_from_description(description,X, y)
 % -----------
 % descr : tuple of tuples    - Describes the model structure, e.g. 
 %                              %% create the cell array description of the model
-%                                 d = {["s(1)", "inc", 100, 3000, "e"]; 
-%                                      ["t(1,2)", "none,none", "12,20", "2000,2000", "e,q"]};
+%                                 d = {["t(1,2)", "none,none", "12,20", "2000,2000", "e,q"]
+%                                        ["s(1)", "inc", 100, 3000, "e"]; 
+%                                      };
 %                                 describing a model using a P-spline with increasing constraint and 100 
 %                                 basis functions for dimension 1 and a tensor-product P-spline without 
 %                                 constraints using 12 and 10 basis functions for the respective dimension.

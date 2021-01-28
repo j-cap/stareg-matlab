@@ -13,7 +13,7 @@ function [B, knots] = basismatrix(X, nr_splines, order, knot_type)
 % nr_splines : int -  Number of parameters (== number of B-spline basis 
 %                     functions).
 % order : int      -  Specifies the order of the B-spline basis functions.
-% knot_type : str  -  Decide between equidistant "e" and quantile based "q"
+% knot_type : str  -  Decide between equidistant "e" and quantile-based "q"
 %                     knot placement.
 %
 % Returns:
