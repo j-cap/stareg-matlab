@@ -31,4 +31,8 @@ d = {["s(1)", "inc", 100, 3000, "e"];
 - Interpretable Machine Learning
 - Uni- and multivariate regression
 
+## Support
+If you are having issues, please let us know. Contact can be made via [GitHub](https://github.com/j-cap/stareg-matlab).
 
+## License
+The project is licensed under the MIT license.
