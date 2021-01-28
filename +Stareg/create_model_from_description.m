@@ -17,7 +17,7 @@ function [model] = create_model_from_description(description,X, y)
 %    
 % Returns:
 % --------
-% model : dict      - Returns a dictionary with the following key-value pairs:
+% model : struct  - Returns a dictionary with the following key-value pairs:
 %                        basis=B, 
 %                        smoothness=S, 
 %                        constraint=K, 
@@ -50,14 +50,14 @@ end
            dim = str2double(type_{1}(3));
            nr_splines = str2double(nr_splines);
            lam_c = str2double(lam_c);
-           [B,~] = Bspline.basismatrix(X(:,dim), nr_splines, 3, knot_type);
+           [B,knots] = Bspline.basismatrix(X(:,dim), nr_splines, 3, knot_type);
            Ds = Utils.mapping_matrix("smooth", nr_splines);
            Dc = Utils.mapping_matrix(constr, nr_splines);
            best_lam = Bspline.calc_GCV(X(:,dim), y, 100, 0, nr_splines, 3, knot_type);
            [coef_pls, B_, k_] = Bspline.fit_Pspline(X(:,dim),y,best_lam, nr_splines, 3, knot_type);
            v = Utils.check_constraint(coef_pls, constr, y, B);
            model.(fn{k}) = struct("type", type_, "B",B,"Ds",Ds,"Dc",Dc,"best_lam",best_lam,"lam_c", lam_c, "coef_pls",coef_pls, "v", v, ...
-               "knot_type", knot_type, "spline_order", 3, "nr_splines", nr_splines, "constraint", constr);
+               "knot_type", knot_type, "spline_order", struct("so1", 3), "nr_splines", nr_splines, "constraint", constr, "knots", knots);
        elseif s(1).startsWith("t")
            dim1 = str2double(type_{1}(3));
            dim2 = str2double(type_{1}(5));
@@ -65,7 +65,7 @@ end
            nr_splines = str2double(nr_splines.split(","));
            lam_c = str2double(lam_c.split(","));
            knot_type = knot_type.split(",");
-           [T,~] = Bspline.tensorproduct_basismatrix(X(:,[dim1,dim2]), nr_splines, [3,3], knot_type);
+           [T,knots] = Bspline.tensorproduct_basismatrix(X(:,[dim1,dim2]), nr_splines, [3,3], knot_type);
            Ds1 = Utils.mapping_matrix_tp("smooth", nr_splines, 1);
            Ds2 = Utils.mapping_matrix_tp("smooth", nr_splines, 2);
            Dc1 = Utils.mapping_matrix_tp(constr(1), nr_splines, 1);
@@ -76,7 +76,7 @@ end
            v2 = Utils.check_constraint_dim2(coef_pls, constr(2), nr_splines);
            model.(fn{k}) = struct("type", type_, "B",T,"Ds",struct("Ds1", Ds1, "Ds2", Ds2),"Dc", struct("Dc1", Dc1, "Dc2", Dc2), ...
                "best_lam",best_lam,"lam_c", lam_c, "coef_pls",coef_pls, "v", struct("v1", v1, "v2", v2), "knot_type", knot_type, ...
-               "spline_order", struct("so1", 3, "so2", 3), "nr_splines", nr_splines, "constraint", constr);
+               "spline_order", struct("so1", 3, "so2", 3), "nr_splines", nr_splines, "constraint", constr,"knots", knots);
        end
     end
     

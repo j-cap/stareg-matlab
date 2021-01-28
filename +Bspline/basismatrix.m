@@ -20,7 +20,7 @@ function [B, knots] = basismatrix(X, nr_splines, order, knot_type)
 % --------
 % B  :  matrix    - B-spline basis of dim (length(X) times nr_splines).
 % knots : struct  - Knot sequence.
-
+%%
 arguments
    X (:,1) double;
    nr_splines (1,1) double = 10;
@@ -29,27 +29,28 @@ arguments
 end
     
     B = zeros(length(X), nr_splines);
-    xmin = min(X); xmax =  max(X);
+    xmin = min(X);
+    xmax = max(X);
 
     if knot_type == "e"
-        knots = linspace(xmin, xmax, nr_splines-order+1);
+        inner_knots = linspace(xmin, xmax, nr_splines-order+1);
     elseif knot_type == "q"
         p = linspace(0, 1, nr_splines-order+1);
-        xs = sort(X); % Ordered elements
-        i = (length(xs)-1)*p(:)+1; % Indexes
-        knots = xs(floor(i))';
+        xs = sort(X); 
+        i = (length(xs)-1)*p(:)+1; 
+        inner_knots = xs(floor(i))';
     else
         disp("Knot Type not implemented ");
     end
     
-    dknots = mean(diff(knots));
+    dknots = mean(diff(inner_knots));
     knots_left = linspace(xmin-order*dknots, xmin-dknots, order);
     knots_right = linspace(xmax+dknots, xmax+order*dknots, order);
-    knots = [knots_left, knots, knots_right]; 
+    knots = [knots_left, inner_knots, knots_right]; 
 
     for i=order+1:length(knots)-1
         B(:,i-order) = Bspline.basisfunction(X, knots, i, order);
     end
-    B = sparse(B);
+    
     knots = struct("k1", knots);
 end

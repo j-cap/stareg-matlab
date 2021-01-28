@@ -49,6 +49,7 @@ end
     Bty = basismatrix'*y;
     D1tD1 = D1'*D1;
     D2tD2 = D2'*D2;
+    len_y = length(y);
     
     for i=1:length(lams)
         msg = ['try: lam=', num2str(lams(i))];
@@ -56,7 +57,7 @@ end
         coef_pls = (BtB + lams(i) * D1tD1 + lams(i) * D2tD2) \ Bty;
         traceH = trace((BtB + lams(i) * D1tD1 + lams(i) * D2tD2) \ BtB);
         ypred = basismatrix * coef_pls;
-        gcvs(i) = sum(((y - ypred) ./ (1 - traceH/length(y))).^2) / length(y);
+        gcvs(i) = sum(((y - ypred) ./ (1 - traceH/len_y)).^2) / len_y;
     end
     [~, idx] = min(gcvs);
     best_lam = lams(idx);

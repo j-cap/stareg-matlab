@@ -30,7 +30,7 @@ end
     for i=1:size(X,1)
         T(i,:) = kron(B2(i,:), B1(i,:));
     end
-    T = sparse(T);
+    
     knots.k1 = knots1.k1;
     knots.k2 = knots2.k1;
 end

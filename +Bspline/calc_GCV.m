@@ -41,14 +41,14 @@ end
     BtB = B'*B;
     Bty = B'*y;
     DtD = D'*D;
-    
+    len_y = length(y);
     for i=1:length(lams)
         msg = ['try: lam=', num2str(lams(i))];
         disp(msg);
         coef_pls = (BtB + lams(i) * DtD) \ Bty;
         traceH = trace((BtB + lams(i) * DtD) \ BtB);
         ypred = B * coef_pls;
-        gcvs(i) = sum(((y - ypred) ./ (1 - traceH/length(y))).^2) / length(y);
+        gcvs(i) = sum(((y - ypred) ./ (1 - traceH/len_y)).^2) / len_y;
     end
     [~, idx] = min(gcvs);
     best_lam = lams(idx);

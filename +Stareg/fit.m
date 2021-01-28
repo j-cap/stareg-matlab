@@ -8,12 +8,14 @@ function [coef, B, model] = fit(description, X,y)
 % -----------
 % description : struct with fields    - Describes the model structure, e.g. 
 %                       create the cell array description of the model
+
 %                       d = {["s(1)", "inc", 100, 3000, "e"]; 
 %                            ["t(1,2)", "inc,none", "12,20", "2000,2000", "e,q"]};
 %                       describing a model using a P-spline with increasing constraint and 100 
 %                       basis functions for dimension 1 and a tensor-product P-spline with
 %                       increasing constraint for dimension 1 and no constraints for dimension 2
 %                       using 12 and 10 basis functions for the respective dimension.
+%
 % X :  array        - input data, shape (n_samples, n_dim)
 % y : array         - target data, shape (n_samples, )
 %    
@@ -33,8 +35,6 @@ end
     [B, S, K, W, coef_pls] = Stareg.create_model_matrices(model);
     coef = struct("c0", coef_pls);
 
-    pause(0.3);
-    
     iterIdx = 1;
     BtB = B'*B;
     Bty = B'*y;
@@ -48,11 +48,11 @@ end
         coef.("c"+string(iterIdx)) = coef_pls;
         
         [w, W_compare] = Utils.check_constraint_full(coef_pls, model, B, y);
+        K = Utils.create_constraint_matrix(model, w);
         
         fprintf("Iteration %d \n", iterIdx);
         fprintf("MSE = %4.4f \n", Utils.mse(y, B*coef_pls));
         fprintf("---------------------------------------\n");
-        K = Utils.create_constraint_matrix(model, w);
 
         iterIdx = iterIdx + 1;
         if iterIdx > 25
