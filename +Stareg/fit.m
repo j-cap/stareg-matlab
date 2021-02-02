@@ -1,4 +1,4 @@
-function [coef, B, model] = fit(description, X,y)
+function [coef, B, model, reduced_model] = fit(description, X,y)
 %%
 % Fit a structured additive regression model using B-splines and
 % tensor-product B-splines to the data given in (X, y) following the
@@ -24,6 +24,7 @@ function [coef, B, model] = fit(description, X,y)
 % coef : array              - Estimated coefficients.
 % B : matrix                - Basis matrix to evaluation the model. 
 % model : struct            - Model struct.
+% reduced_model : struct    - Model struct for fast_prediction.
 %
 % Dependencies:
 %    Matlab release: 2020b
@@ -77,9 +78,12 @@ end
         iterIdx = iterIdx + 1;
         if iterIdx > 25
             disp("Stop the count")
+            [reduced_model] = Stareg.create_reduced_model(model);  % create reduced model for fast prediciton
             return
         end
     end
     
+    % create reduced model for fast prediciton
+    [reduced_model] = Stareg.create_reduced_model(model);
 end
 

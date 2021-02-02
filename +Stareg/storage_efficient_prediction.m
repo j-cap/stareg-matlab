@@ -1,12 +1,12 @@
-function s = predict(Xpred, model, coef)
+function s = storage_efficient_prediction(Xpred, reduced_model, coef)
 %%
 % Calculate predictions for data in Xpred given the model and coef.
 %
 % Inputs:
 % -------
-% Xpred : matrix       - Input data to evaluate the model on
-% model : struct       - Model struct.
-% coef : struct        - Coefficients to calculate the prediction for
+% Xpred : matrix           - Input data to evaluate the model on
+% reduced_model : struct   - Minimal Model struct.
+% coef : array             - Coefficients to calculate the prediction for
 %
 % Outputs:
 % --------
@@ -33,20 +33,20 @@ function s = predict(Xpred, model, coef)
 %%
 arguments % default values
    Xpred (:,:) double;
-   model (1,1) struct;
-   coef (1,1) struct;
+   reduced_model (1,1) struct;
+   coef (:,1) double;
 end
 
-    fn = fieldnames(model);
+    fn = fieldnames(reduced_model);
     [n_pred, ~] = size(Xpred);
     B = [];
  
     for submodel=1:numel(fn) % iterate over all submodels
 
-        type_ = model.(fn{submodel}).type;
-        nr_coef = model.(fn{submodel}).nr_splines; % get coefficients of the submodel
-        knots = model.(fn{submodel}).knots;     % get knots of the submodel
-        order = model.(fn{submodel}).spline_order; % get spline order of the submodel
+        type_ = reduced_model.(fn{submodel}).type;
+        nr_coef = reduced_model.(fn{submodel}).nr_splines; % get coefficients of the submodel
+        knots = reduced_model.(fn{submodel}).knots;     % get knots of the submodel
+        order = reduced_model.(fn{submodel}).spline_order; % get spline order of the submodel
 
         if type_.startsWith("s") % 
             dim = str2double(type_{1}(3));
@@ -76,9 +76,8 @@ end
         end
         B = [B, basis];
     end
-
-    % get the last coef vector out of the coef struct
-    s = B*coef.("c"+string(length(fieldnames(coef))-1));
+    
+    s = B*coef;
 
 end
 

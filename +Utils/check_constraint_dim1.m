@@ -62,6 +62,9 @@ end
             v1 = v1 > 0;
         case "none"
             v1 = zeros(size(v1));
+        otherwise
+            disp("Constraint not implemented!");
+            return
     end
 
 end
