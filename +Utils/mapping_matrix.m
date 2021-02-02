@@ -12,12 +12,30 @@ function D = mapping_matrix(constraint, nr_splines)
 % --------
 % D  : matrix       - Mapping matrix D
 %
+% Dependencies:
+%    Matlab release: 2020b
+%
+% This function is part of: stareg-matlab
+%
+% Author:  Jakob Weber
+% email:   jakob.weber@ait.ac.at
+% Company: Austrian Institute of Technology GmbH
+%          Complex Dynamical Systems
+%          Center for Vision, Automation & Control
+%          http://www.ait.ac.at
+%
+% Version: 1.0.1 - 2021-02-02
+
+% Change log:
+% x.y.z - 2021-02-02 - author:
+% - added important feature, s. issue #34
+% - fixed bug #2
 %%
-arguments
+arguments % default values
     constraint (1,1) string
     nr_splines (1,1) double = 10;
 end
-
+    
     if ismember(constraint, ["inc", "dec", "peak", "valley"])
         order = 1;
         d = [-1*ones(nr_splines,1), ones(nr_splines,1)];

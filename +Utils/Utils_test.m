@@ -277,8 +277,8 @@ function test_check_constraint_full(testCase)
     y = 4*X(:,1) + X(:,1) .* X(:,2) + randn(n_data,1)*0.2;
 
     description = {
-        ["s(1)", "inc", 50, 3000, "e"]; 
-        ["t(1,2)", "none,inc", "12,20", "2000,2000", "e,q"]};
+        ["s(1)", 50, "inc", 3000, "e"]; 
+        ["t(1,2)", "12,20", "none,inc", "2000,2000", "e,q"]};
     model = Stareg.create_model_from_description(description, X, y);  
     [B, S, K, W, coef] = Stareg.create_model_matrices(model);
 
@@ -299,8 +299,8 @@ function test_create_constraint_matrix(testCase)
     y = 4*X(:,1) + X(:,1) .* X(:,2) + randn(n_data,1)*0.2;
 
     description = {
-        ["s(1)", "inc", 50, 3000, "e"]; 
-        ["t(1,2)", "none,inc", "12,20", "2000,2000", "e,q"]};
+        ["s(1)", 50, "inc", 3000, "e"]; 
+        ["t(1,2)", "12,20", "none,inc", "2000,2000", "e,q"]};
     model = Stareg.create_model_from_description(description, X, y);  
     [B, S, K, W, coef] = Stareg.create_model_matrices(model);
 

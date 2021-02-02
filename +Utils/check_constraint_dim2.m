@@ -55,7 +55,6 @@ end
         end
     end
 
-
     switch constraint
         case "inc"
             v2 = v2 < 0;
