@@ -1,6 +1,9 @@
 function tests = Utils_test
 %%
 % Main Function 
+%
+% run
+% >>runtests('Utils_test.m')
 tests = functiontests(localfunctions);
 end
 

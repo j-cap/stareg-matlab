@@ -14,16 +14,38 @@ function v1 = check_constraint_dim1(coef, constraint, nr_splines)
 % Returns
 % -------
 % v1  : array         - Diagonal elements of the weighting matrix V.
+%
+% Dependencies:
+%    Matlab release: 2020b
+%
+% This function is part of: stareg-matlab
+%
+% Author:  Jakob Weber
+% email:   jakob.weber@ait.ac.at
+% Company: Austrian Institute of Technology GmbH
+%          Complex Dynamical Systems
+%          Center for Vision, Automation & Control
+%          http://www.ait.ac.at
+%
+% Version: 1.0.1 - 2021-02-02
+
+% Change log:
+% x.y.z - 2021-02-02 - author:
+% - added important feature, s. issue #34
+% - fixed bug #2
 %%
-arguments
+arguments % default values
     coef (:,1) double
     constraint (1,1) string = "inc";
     nr_splines (1,2) double = [12,8];
 end
-    if ismember(constraint, ["inc", "dec"])
-        diff = 1;
-    else
-        diff = 0;
+    switch constraint
+        case "inc"
+            diff = 1;
+        case "dec"
+           diff = 1;
+        otherwise
+            diff = 0;
     end
 
     v1 = zeros((nr_splines(1)-diff)*nr_splines(2), 1);
@@ -33,12 +55,13 @@ end
         end
     end
 
-    if constraint == "inc"
-        v1 = v1 < 0;
-    elseif constraint == "dec"
-        v1 = v1 > 0;
-    elseif constraint == "none"
-        v1 = zeros(size(v1));
+    switch constraint
+        case "inc"
+            v1 = v1 < 0;
+        case "dec"
+            v1 = v1 > 0;
+        case "none"
+            v1 = zeros(size(v1));
     end
 
 end

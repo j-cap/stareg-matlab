@@ -1,6 +1,9 @@
 function tests = Bspline_test
 %%
 % Main Function 
+% use 
+% >>runtests('Bspline_test.m'); 
+% to run the test
 tests = functiontests(localfunctions);
 end
 
@@ -21,8 +24,8 @@ function test_basismatrix_equidistant(testCase)
     assert(all(size(basis_matrix) == [n_data, nr_splines]));
     assert(length(knots.k1) == nr_splines+order+1);
     assert(Utils.iscloseall(sum(full(basis_matrix), 2), ones(n_data,1)));
-    Utils.iscloseall(mean(diff(knots.k1)), knots.k1(2)-knots.k1(1))
-    Utils.iscloseall(mean(diff(knots.k1)), knots.k1(end-2)-knots.k1(end-1))
+    Utils.iscloseall(mean(diff(knots.k1)), knots.k1(2)-knots.k1(1));
+    Utils.iscloseall(mean(diff(knots.k1)), knots.k1(end-2)-knots.k1(end-1));
 end
 
 function test_basismatrix_quantile(testCase)
@@ -178,7 +181,7 @@ function test_predict_Bspline(testCase)
     
     [coef, basis_matrix, knots] = Bspline.fit(x,y,nr_splines,order,knot_type);
     
-    s = Bspline.predict(x_test, knots, coef, order);
+    s = Bspline.predict(x_test, knots, coef, struct("so1",order));
     
     assert(length(s) == n_data_test);
     
@@ -201,7 +204,7 @@ function test_predict_tensorproduct_Bspline(testCase)
      
     [coef, basis_matrix, knots] = Bspline.fit(X,y, nr_splines, orders, knot_types);
     
-    s = Bspline.predict(x_test, knots, coef, orders);
+    s = Bspline.predict(x_test, knots, coef, struct("so1",orders(1), "so2", orders(2)));
     
     assert(length(s) == n_data_test);
     

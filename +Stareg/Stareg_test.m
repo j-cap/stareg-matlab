@@ -4,12 +4,34 @@ function tests = Stareg_test
 tests = functiontests(localfunctions);
 end
 
+function test_predict(testCase)
+    rng(2);
+    description = {
+        ["s(1)", 100, "inc", 3000, "e"]; 
+        ["s(2)", 10, "peak", 300, "e"];
+        ["t(1,2)", "12,20", "inc,none", "2000,2000", "e,q"]
+        };
+    n_data = 500;
+    X = [rand(n_data,1), rand(n_data,1)];
+    y = 4*X(:,1) + exp(-(X(:,2)-0.4).^2 ./ 0.01) + X(:,1) .* X(:,2) + randn(n_data,1)*0.2;
+    
+    [coef, basis_matrix, model] = Stareg.fit(description, X, y);
+    n_pred = 100;
+    Xpred = [linspace(0,1,n_pred)', rand(n_pred, 1)];
+    s = Stareg.predict(Xpred, model, coef);
+    
+    assert(length(s) == n_pred); 
+
+end
+
+
+
 function test_create_model_from_description(testCase)
     rng(2);
     description = {
-        ["s(1)", "inc", 100, 3000, "e"]; 
-        ["s(2)", "peak", 10, 300, "e"];
-        ["t(1,2)", "inc,none", "12,20", "2000,2000", "e,q"]
+        ["s(1)", 100, "inc", 3000, "e"]; 
+        ["s(2)", 10, "peak", 300, "e"];
+        ["t(1,2)", "12,20", "inc,none", "2000,2000", "e,q"]
         };
     n_data = 500;
     X = [rand(n_data,1), rand(n_data,2)];
@@ -63,9 +85,9 @@ end
 function test_create_model_matrices(testCase)
     rng(2);
     description = {
-        ["s(1)", "inc", 100, 3000, "e"]; 
-        ["s(2)", "conc", 10, 300, "e"];
-        ["t(1,2)", "inc,none", "12,20", "2000,2000", "e,q"]
+        ["s(1)", 100, "inc", 3000, "e"]; 
+        ["s(2)", 10, "conc", 300, "e"];
+        ["t(1,2)", "12,20", "inc,none", "2000,2000", "e,q"]
         };
     n_data = 500;
     X = [rand(n_data,1), rand(n_data,2)];
@@ -88,7 +110,7 @@ function test_fit_1d_inc(testCase)
     x = rand(n_data,1);
     y = sin(6*x) + 4*x.^2 + randn(n_data, 1)*0.2;
 
-    description = {["s(1)", "inc", 80, 6000, "e"]; };
+    description = {["s(1)", 80, "inc", 6000, "e"]; };
     [coef, basis_matrix] = Stareg.fit(description, x, y);
 
     fn = fieldnames(coef);
@@ -111,7 +133,7 @@ function test_fit_1d_dec(testCase)
     x = rand(n_data,1);
     y = sin(6*x) + 4*x.^2 + randn(n_data, 1)*0.2;
 
-    description = {["s(1)", "dec", 80, 6000, "e"]; };
+    description = {["s(1)", 80, "dec", 6000, "e"]; };
     [coef, basis_matrix] = Stareg.fit(description, x, y);
 
     fn = fieldnames(coef);
@@ -134,7 +156,7 @@ function test_fit_1d_none(testCase)
     x = rand(n_data,1);
     y = sin(6*x) + 4*x.^2 + randn(n_data, 1)*0.2;
 
-    description = {["s(1)", "none", 80, 6000, "e"]; };
+    description = {["s(1)", 80, "none", 6000, "e"]; };
     [coef, basis_matrix] = Stareg.fit(description, x, y);
 
     fn = fieldnames(coef);
@@ -157,7 +179,7 @@ function test_fit_1d_peak(testCase)
     x = rand(n_data,1);
     y = 4*exp(-(x-0.4).^2 / 0.01) + x.^2 + randn(n_data, 1)*0.2;
     
-    description = {["s(1)", "peak", 80, 6000, "e"]; };
+    description = {["s(1)", 80, "peak", 6000, "e"]; };
     [coef, basis_matrix] = Stareg.fit(description, x, y);
 
     fn = fieldnames(coef);
@@ -180,7 +202,7 @@ function test_fit_1d_valley(testCase)
     x = rand(n_data,1);
     y = -4*exp(-(x-0.4).^2 / 0.01) + x.^2 + randn(n_data, 1)*0.2;
     
-    description = {["s(1)", "valley", 80, 6000, "e"]; };
+    description = {["s(1)", 80, "valley", 6000, "e"]; };
     [coef, basis_matrix] = Stareg.fit(description, x, y);
 
     fn = fieldnames(coef);
@@ -205,8 +227,8 @@ function test_fit_2d(testCase)
     y = 4*exp(-(X(:,1)-0.4).^2 / 0.01) + X(:,2).^2 + randn(n_data, 1)*0.2;
     
     description = {
-        ["s(1)", "peak", 80, 3000, "e"]; 
-        ["t(1,2)", "none,inc", "12,8", "2000,2000", "e,q"]
+        ["s(1)", 80, "peak", 3000, "e"]; 
+        ["t(1,2)", "12,8", "none,inc", "2000,2000", "e,q"]
         };
     
     [coef, basis_matrix, model] = Stareg.fit(description, X, y);
@@ -224,6 +246,7 @@ function test_fit_2d(testCase)
     %grid(); legend();
         
 end
+
 
 
 

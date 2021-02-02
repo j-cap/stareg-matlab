@@ -22,22 +22,41 @@ function [basis_matrix, smoothness_matrix, constr_matrix, weight_matrix, coef] =
 %       concatenation of the individual coefficient vectors
 %
 %
-% Parameters:
+% Inputs:
 % -----------
 % model : struct with fields    - Created by the function
 %                                 Stareg.create_model_from_description
 %
-% Returns:
+% Outputs:
 % --------
-% basis_matrix : matrix         - basis_matrix 
-% smoothness_matrix : matrix
+% basis_matrix : matrix          
+% smoothness_matrix : matrix     
 % constr_matrix : matrix    
 % weight_matrix : matrix           - IMPORANT: only for comparison reason,
 %                                    does not include the original weights
 %                                    for tensor-product B-splines.
 % coef : array 
+%
+% Dependencies:
+%    Matlab release: 2020b
+%
+% This function is part of: stareg-matlab
+%
+% Author:  Jakob Weber
+% email:   jakob.weber@ait.ac.at
+% Company: Austrian Institute of Technology GmbH
+%          Complex Dynamical Systems
+%          Center for Vision, Automation & Control
+%          http://www.ait.ac.at
+%
+% Version: 1.0.1 - 2021-02-02
+
+% Change log:
+% x.y.z - 2021-02-02 - author:
+% - added important feature, s. issue #34
+% - fixed bug #2
 %%
-arguments
+arguments % default values
     model (1,1) struct;
 end
     fn = fieldnames(model);
@@ -46,7 +65,7 @@ end
     smoothness_matrix = [];
     weight_matrix = [];
     coef = [];
-    for i=1:numel(fn)
+    for i=1:numel(fn) % iterate over all submodels
 
         basis_matrix = [basis_matrix, model.(fn{i}).B]; % create basis
         if model.(fn{i}).type.startsWith("s") % create smoothness matrix and constraint matrix for B-splines

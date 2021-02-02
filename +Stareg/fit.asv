@@ -44,7 +44,8 @@ function [coef, B, model] = fit(description, X,y)
 % - added important feature, s. issue #34
 % - fixed bug #2
 %% 
-arguments % default values
+
+arguments
     description (:,1) cell;
     X (:,:) double;
     y (:,1) double;
@@ -64,12 +65,11 @@ end
     while ~all(V_old == V_compare) % check condition for termination
         V_old = V_compare;
         coef_pls = (BtB + S + K) \ Bty; % calculate new coefficients
-        coef.("c"+string(iterIdx)) = coef_pls; % add new coefficients to coef struct
+        coef.("c"+string(iterIdx)) = coef_pls; % add new coeffic
         
-        [v, V_compare] = Utils.check_constraint_full(coef_pls, model, B, y); % check the new coef against all constraints
-        K = Utils.create_constraint_matrix(model, v); % create new constraint matrix K
+        [w, V_compare] = Utils.check_constraint_full(coef_pls, model, B, y);
+        K = Utils.create_constraint_matrix(model, w);
         
-        % print some metrics
         fprintf("Iteration %d \n", iterIdx);
         fprintf("MSE = %4.4f \n", Utils.mse(y, B*coef_pls));
         fprintf("---------------------------------------\n");
