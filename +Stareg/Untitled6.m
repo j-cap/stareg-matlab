@@ -20,8 +20,7 @@ n_pred = 5;
 Xpred = rand(n_pred, 2);
 ypred_true = 4*Xpred(:,1).^2 - Xpred(:,2);
 figure(); scatter3(Xpred(:,1), Xpred(:,2), ypred_true); hold on; grid
-%%
-c = coef_.c10;
+
 %% TIME CHECK
 tic; s_pred = Stareg.predict(Xpred, model, coef_); toc;
 tic; s_pred_2 = Stareg.predict(Xpred, reduced_model, coef_); toc;
