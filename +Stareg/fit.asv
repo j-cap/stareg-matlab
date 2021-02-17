@@ -79,11 +79,12 @@ end
         iterIdx = iterIdx + 1;
         if iterIdx > 25
             disp("Stop the count")
-            break
+
+            return
         end
     end
+    
     % create reduced model for fast prediciton
-    coef_ = coef_pls;
     [reduced_model] = Stareg.create_reduced_model(model);
 end
 

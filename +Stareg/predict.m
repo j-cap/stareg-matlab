@@ -6,7 +6,7 @@ function s = predict(Xpred, model, coef)
 % -------
 % Xpred : matrix       - Input data to evaluate the model on
 % model : struct       - Model struct.
-% coef : struct        - Coefficients to calculate the prediction for
+% coef : array         - Coefficients to calculate the prediction for
 %
 % Outputs:
 % --------
@@ -34,7 +34,7 @@ function s = predict(Xpred, model, coef)
 arguments % default values
    Xpred (:,:) double;
    model (1,1) struct;
-   coef (1,1) struct;
+   coef (:,1) double;
 end
 
     fn = fieldnames(model);
@@ -77,8 +77,7 @@ end
         B = [B, basis];
     end
 
-    % get the last coef vector out of the coef struct
-    s = B*coef.("c"+string(length(fieldnames(coef))-1));
+    s = B*coef;
 
 end
 
