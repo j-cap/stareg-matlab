@@ -111,10 +111,11 @@ function test_fit_1d_inc(testCase)
     y = sin(6*x) + 4*x.^2 + randn(n_data, 1)*0.2;
 
     description = {["s(1)", 80, "inc", 6000, "e"]; };
-    [coef, basis_matrix] = Stareg.fit(description, x, y);
+    [coef, basis_matrix, model, reduced_model, coef_list] = Stareg.fit(description, x, y);
 
-    fn = fieldnames(coef);
-    assert(length(coef.(fn{end})) == 80);
+    fn = fieldnames(coef_list);
+    assert(length(coef) == 80);
+    assert(length(coef_list.(fn{end})) == 80);
     assert(all(size(basis_matrix) == [100,80]));
     
     % plot the iteration
@@ -134,10 +135,11 @@ function test_fit_1d_dec(testCase)
     y = sin(6*x) + 4*x.^2 + randn(n_data, 1)*0.2;
 
     description = {["s(1)", 80, "dec", 6000, "e"]; };
-    [coef, basis_matrix] = Stareg.fit(description, x, y);
+    [coef, basis_matrix, model, reduced_model, coef_list] = Stareg.fit(description, x, y);
 
-    fn = fieldnames(coef);
-    assert(length(coef.(fn{end})) == 80);
+    fn = fieldnames(coef_list);
+    assert(length(coef) == 80);
+    assert(length(coef_list.(fn{end})) == 80);
     assert(all(size(basis_matrix) == [100,80]));
     
     % plot the iteration
@@ -157,10 +159,11 @@ function test_fit_1d_none(testCase)
     y = sin(6*x) + 4*x.^2 + randn(n_data, 1)*0.2;
 
     description = {["s(1)", 80, "none", 6000, "e"]; };
-    [coef, basis_matrix] = Stareg.fit(description, x, y);
+    [coef, basis_matrix, model, reduced_model, coef_list] = Stareg.fit(description, x, y);
 
-    fn = fieldnames(coef);
-    assert(length(coef.(fn{end})) == 80);
+    fn = fieldnames(coef_list);
+    assert(length(coef) == 80);
+    assert(length(coef_list.(fn{end})) == 80);
     assert(all(size(basis_matrix) == [100,80]));
     
     % plot the iteration
@@ -180,10 +183,11 @@ function test_fit_1d_peak(testCase)
     y = 4*exp(-(x-0.4).^2 / 0.01) + x.^2 + randn(n_data, 1)*0.2;
     
     description = {["s(1)", 80, "peak", 6000, "e"]; };
-    [coef, basis_matrix] = Stareg.fit(description, x, y);
+    [coef, basis_matrix, model, reduced_model, coef_list] = Stareg.fit(description, x, y);
 
-    fn = fieldnames(coef);
-    assert(length(coef.(fn{end})) == 80);
+    fn = fieldnames(coef_list);
+    assert(length(coef) == 80);
+    assert(length(coef_list.(fn{end})) == 80);
     assert(all(size(basis_matrix) == [100,80]));
     
     % plot the iteration
@@ -203,10 +207,11 @@ function test_fit_1d_valley(testCase)
     y = -4*exp(-(x-0.4).^2 / 0.01) + x.^2 + randn(n_data, 1)*0.2;
     
     description = {["s(1)", 80, "valley", 6000, "e"]; };
-    [coef, basis_matrix] = Stareg.fit(description, x, y);
+    [coef, basis_matrix, model, reduced_model, coef_list] = Stareg.fit(description, x, y);
 
-    fn = fieldnames(coef);
-    assert(length(coef.(fn{end})) == 80);
+    fn = fieldnames(coef_list);
+    assert(length(coef) == 80);
+    assert(length(coef_list.(fn{end})) == 80);
     assert(all(size(basis_matrix) == [100,80]));
     
     % plot the iteration
@@ -231,10 +236,11 @@ function test_fit_2d(testCase)
         ["t(1,2)", "12,8", "none,inc", "2000,2000", "e,q"]
         };
     
-    [coef, basis_matrix, model] = Stareg.fit(description, X, y);
+    [coef, basis_matrix, model, reduced_model, coef_list] = Stareg.fit(description, X, y);
 
-    fn = fieldnames(coef);
-    assert(length(coef.(fn{end})) == 80+12*8);
+    fn = fieldnames(coef_list);
+    assert(length(coef) == 80+12*8);
+    assert(length(coef_list.(fn{end})) == 80+12*8);
     assert(all(size(basis_matrix) == [n_data,80+12*8]));
     
     % plot the iteration
