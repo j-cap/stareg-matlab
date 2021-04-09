@@ -6,15 +6,15 @@
 ```Matlab
 rng(2); % set random seed
 n_data = 500; 
-X = [rand(n_data,1), rand(n_data,2)]; % create input data
+X = rand(n_data,2);
 y = exp(-(X(:,1)-0.4).^2 ./ 0.01) + X(:,2).^2 + X(:,1).*X(:,2) + randn(n_data,1)*0.2; % create target data
 
 Xtest = [rand(100,1), rand(100,1)]; % generate test data
-ytest = exp(-(Xtest(:,1)-0.4).^2 ./ 0.01) + Xtest(:,2).^2 + Xtest(:,1).*Xtest(:,2)
+ytest = exp(-(Xtest(:,1)-0.4).^2 ./ 0.01) + Xtest(:,2).^2 + Xtest(:,1).*Xtest(:,2);
 
-d = {["s(1)", "peak", 100, 3000, "e"]; 
-     ["t(1,2)", "none,inc", "12,20", "2000,2000", "e,q"]}; % create model description
-     
+d = {["s(1)", 100, "peak", 3000, "e"]; 
+     ["t(1,2)", "12,20", "inc,inc", "2000,2000", "e,e"]};
+
 [coef, basis_matrix, model] = Stareg.fit(d, X, y); % fit the model
 ypred = Stareg.predict(Xtest, model, coef);
 
